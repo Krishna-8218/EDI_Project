@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Sparkles,
   RefreshCw,
   AlertTriangle,
   CheckCircle2,
@@ -13,26 +12,13 @@ import {
   ArrowRightLeft,
   Activity,
   History,
-  TrendingUp,
   Info,
-  Layers,
-  ChevronRight,
-  Shield,
   CalendarCheck,
 } from 'lucide-react';
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-} from 'recharts';
 import { healthApi } from '../../../api/health.api';
-import { AssetHealthPrediction, HealthFactor, HealthRecommendation } from '../../../types';
+import { AssetHealthPrediction } from '../../../types';
 import { useToast } from '../../../context/ToastContext';
-import { Card, CardHeader } from '../../../components/common/Card';
+import { Card } from '../../../components/common/Card';
 import { Button } from '../../../components/common/Button';
 
 interface AssetHealthCardProps {
@@ -42,7 +28,6 @@ interface AssetHealthCardProps {
 export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => {
   const { success, error: toastError } = useToast();
   const [prediction, setPrediction] = useState<AssetHealthPrediction | null>(null);
-  const [history, setHistory] = useState<AssetHealthPrediction[]>([]);
   const [loading, setLoading] = useState(true);
   const [predicting, setPredicting] = useState(false);
   const [predictStep, setPredictStep] = useState(0);
@@ -50,16 +35,9 @@ export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => 
   const loadData = async () => {
     try {
       setLoading(true);
-      const [healthRes, historyRes] = await Promise.all([
-        healthApi.getAssetHealth(assetId),
-        healthApi.getAssetHealthHistory(assetId),
-      ]);
-
-      if (healthRes.success) {
-        setPrediction(healthRes.data);
-      }
-      if (historyRes.success && historyRes.data) {
-        setHistory(historyRes.data);
+      const res = await healthApi.getAssetHealth(assetId);
+      if (res.success) {
+        setPrediction(res.data);
       }
     } catch (err: any) {
       console.error('Failed to load asset health data:', err);
@@ -93,15 +71,10 @@ export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => 
 
       if (res.success && res.data) {
         setPrediction(res.data);
-        // Refresh history to include the new prediction point
-        const historyRes = await healthApi.getAssetHealthHistory(assetId);
-        if (historyRes.success && historyRes.data) {
-          setHistory(historyRes.data);
-        }
-        success('AI Health & Risk prediction completed');
+        success('Asset health & risk prediction completed');
       }
     } catch (err: any) {
-      toastError(err.message || 'AI Health Prediction service is temporarily unavailable. Please try again.');
+      toastError(err.message || 'Health Prediction service is temporarily unavailable. Please try again.');
     } finally {
       setPredicting(false);
       setPredictStep(0);
@@ -131,8 +104,6 @@ export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => 
         return <ArrowRightLeft className="w-3.5 h-3.5 text-blue-500 shrink-0" />;
       case 'History':
         return <History className="w-3.5 h-3.5 text-slate-500 shrink-0" />;
-      case 'Sparkles':
-        return <Sparkles className="w-3.5 h-3.5 text-purple-500 shrink-0" />;
       default:
         return <CheckCircle2 className="w-3.5 h-3.5 text-indigo-500 shrink-0" />;
     }
@@ -146,7 +117,6 @@ export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => 
           text: 'text-emerald-700 dark:text-emerald-400',
           border: 'border-emerald-200 dark:border-emerald-800',
           stroke: '#10b981',
-          gradient: 'from-emerald-500 to-teal-600',
           label: 'Healthy',
         };
       case 'MAINTENANCE_REQUIRED':
@@ -155,7 +125,6 @@ export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => 
           text: 'text-amber-700 dark:text-amber-400',
           border: 'border-amber-200 dark:border-amber-800',
           stroke: '#f59e0b',
-          gradient: 'from-amber-500 to-orange-600',
           label: 'Maintenance Required',
         };
       case 'REPLACE_SOON':
@@ -165,7 +134,6 @@ export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => 
           text: 'text-rose-700 dark:text-rose-400',
           border: 'border-rose-200 dark:border-rose-800',
           stroke: '#ef4444',
-          gradient: 'from-rose-500 to-red-600',
           label: 'Replace Soon',
         };
     }
@@ -199,27 +167,10 @@ export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => 
     }
   };
 
-  const getPriorityBadge = (priority: string) => {
-    switch (priority) {
-      case 'URGENT':
-        return 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300 border-rose-300';
-      case 'HIGH':
-        return 'bg-orange-100 text-orange-700 dark:bg-orange-950 dark:text-orange-300 border-orange-300';
-      case 'MEDIUM':
-        return 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border-amber-300';
-      case 'LOW':
-      default:
-        return 'bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border-blue-200';
-    }
-  };
-
   if (loading) {
     return (
       <Card className="p-6">
-        <div className="flex items-center gap-3">
-          <div className="w-6 h-6 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 animate-pulse" />
-          <div className="h-5 w-48 bg-slate-200 dark:bg-slate-800 rounded animate-pulse" />
-        </div>
+        <div className="h-5 w-48 bg-slate-200 dark:bg-slate-800 rounded animate-pulse" />
         <div className="mt-6 space-y-4">
           <div className="h-32 bg-slate-100 dark:bg-slate-800/40 rounded-xl animate-pulse" />
           <div className="h-24 bg-slate-100 dark:bg-slate-800/40 rounded-xl animate-pulse" />
@@ -231,27 +182,19 @@ export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => 
   // Initial State (No analysis yet)
   if (!prediction && !predicting) {
     return (
-      <Card className="overflow-hidden border border-indigo-100 dark:border-indigo-950/60 shadow-sm">
+      <Card className="overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="p-6 sm:p-7 text-center space-y-4">
-          <div className="w-14 h-14 mx-auto rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/60 flex items-center justify-center shadow-sm">
-            <Sparkles className="w-7 h-7" />
-          </div>
           <div className="max-w-md mx-auto space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-              <Sparkles className="w-3 h-3 text-indigo-500" />
-              AI Asset Health & Risk
-            </div>
             <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-              No prediction available yet.
+              AI Asset Health & Risk Prediction
             </h3>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-              Analyze this asset using its lifecycle, maintenance and usage history.
+              No prediction available yet. Analyze this asset using its lifecycle, maintenance and usage history.
             </p>
           </div>
           <div className="pt-2">
             <Button
-              variant="gradient"
-              icon={<Sparkles className="w-4 h-4" />}
+              variant="primary"
               onClick={handleRunPrediction}
               className="shadow-sm"
             >
@@ -266,7 +209,7 @@ export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => 
   // Loading / Stepwise State
   if (predicting) {
     return (
-      <Card className="overflow-hidden border border-indigo-100 dark:border-indigo-950/60 shadow-sm">
+      <Card className="overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm">
         <div className="p-6 sm:p-8 space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
@@ -344,16 +287,6 @@ export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => 
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (prediction.healthScore / 100) * circumference;
 
-  // Chart data formatting
-  const chartData = history.map((item) => ({
-    date: new Date(item.predictedAt).toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric',
-    }),
-    score: item.healthScore,
-    status: item.status,
-  }));
-
   const lastAnalyzedDate = new Date(prediction.predictedAt).toLocaleString(undefined, {
     year: 'numeric',
     month: 'short',
@@ -366,23 +299,13 @@ export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => 
     <Card className="overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-5 sm:p-6 pb-0">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/60">
-            <Sparkles className="w-4 h-4" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                AI Asset Health & Risk Prediction
-              </h3>
-              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">
-                v{prediction.modelVersion || '1.0'}
-              </span>
-            </div>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Probabilistic health evaluation based on lifecycle telemetry
-            </p>
-          </div>
+        <div>
+          <h3 className="text-base font-bold text-slate-900 dark:text-white">
+            AI Asset Health & Risk Prediction
+          </h3>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Probabilistic health evaluation based on lifecycle telemetry
+          </p>
         </div>
 
         <div className="flex items-center gap-3">
@@ -541,172 +464,46 @@ export const AssetHealthCard: React.FC<AssetHealthCardProps> = ({ assetId }) => 
           </div>
         </div>
 
-        {/* Middle Section: Contributing Factors & AI Recommendations */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Contributing Factors */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-                <Activity className="w-3.5 h-3.5 text-indigo-500" />
-                Contributing Factors
-              </h4>
-              <span className="text-[11px] text-slate-400">
-                {prediction.factors?.length || 0} telemetry points
-              </span>
-            </div>
-
-            <div className="space-y-2">
-              {prediction.factors && prediction.factors.length > 0 ? (
-                prediction.factors.map((factor, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-3 text-xs hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      {renderFactorIcon(factor.icon)}
-                      <span className="font-medium text-slate-800 dark:text-slate-200 truncate">
-                        {factor.label}
-                      </span>
-                    </div>
-                    <span
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border shrink-0 ${getImpactBadge(
-                        factor.impact
-                      )}`}
-                    >
-                      {factor.impact}
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <p className="text-xs text-slate-400 py-4 text-center">
-                  No specific anomaly factors identified.
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* AI Recommendations */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-purple-500" />
-                AI Recommendations
-              </h4>
-              <span className="text-[11px] text-slate-400">Deterministic decision rules</span>
-            </div>
-
-            <div className="space-y-2.5">
-              {prediction.recommendations && prediction.recommendations.length > 0 ? (
-                prediction.recommendations.map((rec) => (
-                  <div
-                    key={rec.id}
-                    className="p-3.5 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-1.5 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                        {rec.title}
-                      </p>
-                      <span
-                        className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border shrink-0 ${getPriorityBadge(
-                          rec.priority
-                        )}`}
-                      >
-                        {rec.priority}
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400 pl-5 leading-relaxed">
-                      {rec.description}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-xs text-slate-400 py-4 text-center">
-                  No actions required at this time.
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Section: Health History Chart */}
-        <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+        {/* Contributing Factors Section */}
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <div>
-              <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-                <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
-                Health Trajectory & History
-              </h4>
-              <p className="text-[11px] text-slate-400">
-                Chronological asset health score progression across predictions
-              </p>
-            </div>
-            <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
-              {history.length} Analysis Point(s)
+            <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+              <Activity className="w-3.5 h-3.5 text-indigo-500" />
+              Contributing Factors
+            </h4>
+            <span className="text-[11px] text-slate-400">
+              {prediction.factors?.length || 0} telemetry points
             </span>
           </div>
 
-          {chartData.length > 0 ? (
-            <div className="w-full h-52 bg-slate-50/50 dark:bg-slate-900/30 rounded-xl p-3 border border-slate-100 dark:border-slate-800/60">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 10, right: 15, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="healthScoreGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#6366f1" stopOpacity={0.35} />
-                      <stop offset="95%" stopColor="#6366f1" stopOpacity={0.0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#94a3b8" opacity={0.2} />
-                  <XAxis
-                    dataKey="date"
-                    stroke="#94a3b8"
-                    fontSize={10}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    domain={[0, 100]}
-                    stroke="#94a3b8"
-                    fontSize={10}
-                    tickLine={false}
-                    axisLine={false}
-                    ticks={[0, 20, 40, 60, 80, 100]}
-                  />
-                  <Tooltip
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        const d = payload[0].payload;
-                        return (
-                          <div className="bg-slate-900 text-white text-xs py-2 px-3 rounded-lg shadow-xl border border-slate-700 backdrop-blur-md space-y-1">
-                            <p className="text-[10px] text-slate-400 font-semibold">{d.date}</p>
-                            <p className="text-white font-bold text-sm">
-                              Health Score: <span className="text-indigo-400">{d.score} / 100</span>
-                            </p>
-                            <p className="text-[10px] uppercase font-semibold text-slate-300">
-                              Status: {d.status}
-                            </p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="score"
-                    stroke="#6366f1"
-                    strokeWidth={2.5}
-                    fillOpacity={1}
-                    fill="url(#healthScoreGrad)"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <p className="text-xs text-slate-400 py-6 text-center">
-              Historical chart will appear after multiple evaluations.
-            </p>
-          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {prediction.factors && prediction.factors.length > 0 ? (
+              prediction.factors.map((factor, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between gap-3 text-xs hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    {renderFactorIcon(factor.icon)}
+                    <span className="font-medium text-slate-800 dark:text-slate-200 truncate">
+                      {factor.label}
+                    </span>
+                  </div>
+                  <span
+                    className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border shrink-0 ${getImpactBadge(
+                      factor.impact
+                    )}`}
+                  >
+                    {factor.impact}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="text-xs text-slate-400 py-4 text-center sm:col-span-2">
+                No specific anomaly factors identified.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </Card>
