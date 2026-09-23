@@ -1,6 +1,28 @@
-# AssetFlow Enterprise Asset Management System - REST API Backend
+# AssetFlow Enterprise Asset Management System
 
-A production-ready Node.js, Express, TypeScript, and Prisma REST API for **AssetFlow Enterprise Asset Management System**, backed by **Supabase PostgreSQL**.
+A modern, production-grade 3-tier Enterprise Asset Management (EAM) platform with AI-powered predictive health scoring and real-time lifecycle tracking.
+
+---
+
+## 🏗️ Architecture Overview
+
+The system is organized into a clean, decoupled 3-tier enterprise architecture:
+
+```
+EDI_Project/
+├── backend/            # Node.js + Express + TypeScript REST API & Prisma ORM
+│   ├── src/            # Controllers, Services, Routes, Middlewares, Validations
+│   ├── prisma/         # Schema & database seed scripts (Supabase PostgreSQL)
+│   └── tests/          # Comprehensive API & Health prediction test suites
+├── frontend/           # React 18 + Vite + TypeScript Single Page Application
+│   ├── src/            # Components, Pages, Contexts, Hooks, Services
+│   └── public/         # Static assets and icons
+└── ml-service/         # Python FastAPI Machine Learning Microservice
+    ├── app/            # FastAPI endpoints and prediction pipelines
+    ├── model/          # Trained Random Forest & Calibrated Classifiers
+    ├── training/       # Training, evaluation & synthetic data generation
+    └── data/           # Dataset files (CSV & Excel)
+```
 
 ---
 
@@ -8,12 +30,13 @@ A production-ready Node.js, Express, TypeScript, and Prisma REST API for **Asset
 
 - **🔐 Enterprise Authentication**: JWT-based authentication with bcrypt password hashing and token expiration.
 - **🛡️ Role-Based Access Control (RBAC)**: Role validation (`ADMIN`, `MANAGER`, `EMPLOYEE`).
+- **🤖 AI Asset Health & Failure Risk Prediction**: Multi-factor machine learning pipeline predicting asset health scores, risk categories, failure probabilities, and degrading factors.
 - **💻 Asset Lifecycle Tracking**: Full tracking of assets from procurement to decommission (`AVAILABLE`, `ASSIGNED`, `UNDER_MAINTENANCE`, `DAMAGED`, `LOST`, `RETIRED`).
 - **📋 Asset Assignment & Custody**: Atomic assignment checkouts and check-in return workflows.
 - **🔧 Maintenance & Servicing Management**: Scheduled and corrective servicing logs with automated asset status sync.
 - **📝 Incident Reporting**: Damage, loss, and issue filing with resolution workflows.
 - **👥 User & Role Management**: Search, department filtering, profile management, and account deactivation.
-- **📊 Real-time Dashboard Analytics**: Aggregated KPIs, category breakdowns, status distribution, maintenance costs, and recent activities.
+- **📊 Real-time Dashboard Analytics**: Aggregated KPIs in Indian Rupees (₹), category breakdowns, status distribution, maintenance costs, and recent activities.
 - **📜 Immutable Audit Trail**: Automatic audit logging for every security and operational event.
 - **🛡️ Validation & Error Handling**: Zod request schema validation and centralized error formatting.
 
@@ -21,11 +44,9 @@ A production-ready Node.js, Express, TypeScript, and Prisma REST API for **Asset
 
 ## 🛠️ Tech Stack
 
-- **Runtime**: Node.js (v18+)
-- **Framework**: Express.js
-- **Language**: TypeScript
-- **ORM**: Prisma Client & CLI
-- **Database**: PostgreSQL (Supabase)
+- **Frontend**: React 18, Vite, TypeScript, Tailwind CSS, Lucide Icons, Recharts
+- **Backend**: Node.js, Express.js, TypeScript, Prisma ORM, PostgreSQL (Supabase)
+- **ML Service**: Python 3.12, FastAPI, Scikit-learn, Pandas, NumPy, Joblib, OpenPyXL
 - **Security**: Helmet, CORS, JWT, bcryptjs, Zod
 - **Logging**: Morgan HTTP logger & Custom Audit Logger
 
@@ -35,12 +56,24 @@ A production-ready Node.js, Express, TypeScript, and Prisma REST API for **Asset
 
 ### 1. Prerequisites
 - Node.js (v18.0.0 or higher)
+- Python (v3.10+ recommended for ML service)
 - npm or yarn
 
-### 2. Installation
+### 2. Installation & Quick Start
 ```bash
-# Clone or navigate to the repository
+# Install root dependencies
 npm install
+
+# Install & run Backend
+npm run backend:dev
+
+# Run Frontend (Vite)
+npm run frontend:dev
+
+# Run ML Microservice (FastAPI)
+cd ml-service
+pip install -r requirements.txt
+uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
 ### 3. Environment Variables

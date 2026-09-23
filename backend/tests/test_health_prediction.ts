@@ -1,6 +1,6 @@
-import app from './src/app';
+import app from '../src/app';
 import http from 'http';
-import prisma from './src/lib/prisma';
+import prisma from '../src/lib/prisma';
 import { Role } from '@prisma/client';
 
 async function runHealthTests() {

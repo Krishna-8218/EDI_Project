@@ -1,13 +1,12 @@
 # Node modules
 node_modules/
-*/node_modules/
+**/node_modules/
 dist/
-*/dist/
+**/dist/
 
 # Python
 __pycache__/
-*/__pycache__/
-*/*/__pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 *.so
@@ -19,6 +18,7 @@ ENV/
 
 # Environment variables & secrets
 .env
+**/.env
 .env.local
 .env.*.local
 *.env

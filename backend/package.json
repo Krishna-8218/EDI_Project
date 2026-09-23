@@ -1,19 +1,23 @@
 {
-  "name": "assetflow-project",
+  "name": "assetflow-backend",
   "version": "1.0.0",
-  "description": "AssetFlow Enterprise Asset Management System - Monorepo",
+  "description": "AssetFlow Enterprise Asset Management System REST API Backend",
+  "main": "dist/server.js",
   "scripts": {
-    "dev": "npm --prefix backend run dev",
-    "backend:dev": "npm --prefix backend run dev",
-    "backend:build": "npm --prefix backend run build",
-    "backend:test": "npm --prefix backend test",
-    "backend:test:health": "npm --prefix backend run test:health",
-    "backend:prisma:generate": "npm --prefix backend run prisma:generate",
-    "backend:prisma:push": "npm --prefix backend run prisma:push",
-    "frontend:dev": "npm --prefix frontend run dev",
-    "frontend:build": "npm --prefix frontend run build",
-    "frontend:preview": "npm --prefix frontend run preview",
-    "test": "npm --prefix backend test"
+    "dev": "ts-node src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "ts-node tests/test_api.ts",
+    "test:health": "ts-node tests/test_health_prediction.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:push": "prisma db push",
+    "prisma:seed": "prisma db seed",
+    "prisma:studio": "prisma studio",
+    "prisma:validate": "prisma validate"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "keywords": [
     "assetflow",
