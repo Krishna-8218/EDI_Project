@@ -196,7 +196,7 @@ export const AnalyticsPage: React.FC = () => {
             <Skeleton className="h-8 w-28 mt-2" />
           ) : (
             <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1.5">
-              ${totalCost.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              ₹{totalCost.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </p>
           )}
           <p className="text-xs text-slate-400 mt-1">

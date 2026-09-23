@@ -5,7 +5,7 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  DollarSign,
+  IndianRupee,
   AlertCircle,
   Laptop,
   Edit2,
@@ -172,10 +172,10 @@ export const MaintenancePage: React.FC = () => {
           <div className="flex items-center justify-between gap-2 mb-2">
             <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total Servicing Cost</span>
             <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-900/40">
-              <DollarSign className="w-4 h-4" />
+              <IndianRupee className="w-4 h-4" />
             </div>
           </div>
-          <p className="text-2xl font-bold text-slate-900 dark:text-white">${totalCost.toLocaleString()}</p>
+          <p className="text-2xl font-bold text-slate-900 dark:text-white">₹{totalCost.toLocaleString()}</p>
           <p className="text-xs text-slate-400 mt-1">Direct repair & parts expenditure</p>
         </Card>
       </div>
@@ -227,7 +227,7 @@ export const MaintenancePage: React.FC = () => {
                   <th className="py-3 px-5">Service Type</th>
                   <th className="py-3 px-5">Scheduled Date</th>
                   <th className="py-3 px-5">Status</th>
-                  <th className="py-3 px-5">Cost ($)</th>
+                  <th className="py-3 px-5">Cost (₹)</th>
                   <th className="py-3 px-5">Technician / Vendor</th>
                   {canManageAssets && <th className="py-3 px-5 text-right">Actions</th>}
                 </tr>
@@ -284,7 +284,7 @@ export const MaintenancePage: React.FC = () => {
 
                     {/* Cost */}
                     <td className="py-3.5 px-5 font-mono text-xs font-semibold text-slate-900 dark:text-white">
-                      ${Number(record.cost || 0).toFixed(2)}
+                      ₹{Number(record.cost || 0).toFixed(2)}
                     </td>
 
                     {/* Technician */}

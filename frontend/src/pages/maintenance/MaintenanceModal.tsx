@@ -211,7 +211,7 @@ export const MaintenanceModal: React.FC<MaintenanceModalProps> = ({
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-              Estimated / Actual Cost ($)
+              Estimated / Actual Cost (₹)
             </label>
             <input
               type="number"

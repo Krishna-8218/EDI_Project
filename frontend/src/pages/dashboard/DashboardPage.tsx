@@ -11,7 +11,7 @@ import {
   ArrowUpRight,
   Clock,
   Sparkles,
-  DollarSign,
+  IndianRupee,
 } from 'lucide-react';
 import { dashboardApi } from '../../api/dashboard.api';
 import { DashboardStats } from '../../types';
@@ -105,9 +105,9 @@ export const DashboardPage: React.FC = () => {
       ? [
           {
             title: 'Maintenance Spend',
-            value: `$${Number(summary?.totalMaintenanceCost || 0).toLocaleString()}`,
+            value: `₹${Number(summary?.totalMaintenanceCost || 0).toLocaleString()}`,
             subtext: 'YTD servicing total',
-            icon: DollarSign,
+            icon: IndianRupee,
             iconStyle:
               'bg-indigo-50 text-indigo-600 border-indigo-100 dark:bg-indigo-950/50 dark:border-indigo-800/60 dark:text-indigo-300',
           },

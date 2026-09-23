@@ -4,7 +4,7 @@ import {
   ArrowLeft,
   Laptop,
   Calendar,
-  DollarSign,
+  IndianRupee,
   ShieldAlert,
   MapPin,
   Clock,
@@ -194,7 +194,7 @@ export const AssetDetailPage: React.FC = () => {
             <div>
               <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Valuation</span>
               <p className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white mt-0.5">
-                ${Number(asset.purchasePrice || 0).toLocaleString()}
+                ₹{Number(asset.purchasePrice || 0).toLocaleString()}
               </p>
             </div>
             <div>
@@ -325,7 +325,7 @@ export const AssetDetailPage: React.FC = () => {
                       <div>
                         <p className="text-sm font-semibold text-gray-900 dark:text-white">{m.title}</p>
                         <p className="text-xs text-gray-400 mt-0.5">
-                          Type: {m.maintenanceType} • Technician: {m.performedBy || 'Unassigned'} • Cost: ${Number(m.cost || 0).toFixed(2)}
+                          Type: {m.maintenanceType} • Technician: {m.performedBy || 'Unassigned'} • Cost: ₹{Number(m.cost || 0).toFixed(2)}
                         </p>
                         <p className="text-[11px] text-gray-400 mt-1">
                           Date: {m.scheduledDate ? new Date(m.scheduledDate).toLocaleDateString() : 'N/A'}
